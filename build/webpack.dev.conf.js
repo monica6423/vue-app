@@ -1,25 +1,35 @@
+/* 注意！！！
+ * 
+ * 早期的vue-cli下面有dev-server.js和dev-client.js两文件，请求本地数据在dev-server.js里配置中，
+ * 而因为webpack更新，所以在最新的vue-webpack-template 中已经去掉了dev-server.js和dev-client.js 改用webpack.dev.conf.js代替，
+ * 所以 配置本地访问在webpack.dev.conf.js里配置即可。
+ * */
+
 'use strict'
 const utils = require('./utils')
 const webpack = require('webpack')
 const config = require('../config')
 const merge = require('webpack-merge')
-const path = require('path')
 const baseWebpackConfig = require('./webpack.base.conf')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 
-//導入express
-const express = require('express');
-const app = expres();
+// express
+const express = require('express')
+// express 
+const app = express()
+// 1. read json data
+var goods = require('../data/01-order.json');
+var ratings = require('../data/02-comment.json');
+var seller = require('../data/03-vendor.json');
 
-//1.讀取json數據
-let goods = require('../data/01-order.json');
-let ratings = require('../data/02-comment.json');
-let seller = require('../data/03-vendor.json');
+// 
+//var routes = express.Router();
 
-//2.router
+// middleware
+//app.use('/api',routes);
+
 
 
 const HOST = process.env.HOST
@@ -35,13 +45,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   // these devServer options should be customized in /config/index.js
   devServer: {
     clientLogLevel: 'warning',
-    historyApiFallback: {
-      rewrites: [
-        { from: /.*/, to: path.posix.join(config.dev.assetsPublicPath, 'index.html') },
-      ],
-    },
+    historyApiFallback: true,
     hot: true,
-    contentBase: false, // since we use CopyWebpackPlugin.
     compress: true,
     host: HOST || config.dev.host,
     port: PORT || config.dev.port,
@@ -54,7 +59,19 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     quiet: true, // necessary for FriendlyErrorsPlugin
     watchOptions: {
       poll: config.dev.poll,
-    }
+    },
+    // 3.api
+    before(app){
+		app.get('/api/goods', (req,res) => {
+			res.json(goods);
+		}),
+		app.get('/api/ratings', (req,res) => {
+			res.json(ratings);
+		}),
+		app.get('/api/seller', (req,res) => {
+			res.json(seller);
+		})
+	}
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -65,19 +82,10 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new webpack.NoEmitOnErrorsPlugin(),
     // https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
-      //表示打包輸出過程中，會自動將css和js添加到上述文件
       filename: 'index.html',
       template: 'index.html',
       inject: true
     }),
-    // copy custom static assets
-    new CopyWebpackPlugin([
-      {
-        from: path.resolve(__dirname, '../static'),
-        to: config.dev.assetsSubDirectory,
-        ignore: ['.*']
-      }
-    ])
   ]
 })
 
@@ -106,3 +114,5 @@ module.exports = new Promise((resolve, reject) => {
     }
   })
 })
+
+
