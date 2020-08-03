@@ -2,6 +2,8 @@
   <div id="app">
     <MyHeader />
     <MyNav />
+    <!-- router exit, router that matched will render here -->
+    <router-view></router-view>
   </div>
 </template>
 

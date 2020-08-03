@@ -1,15 +1,9 @@
 <template>
     <div class="nav">
-        <div class="nav-item goods">
-            goods
-        </div>
-        <div class="nav-item ratings">
-            ratigs
-        </div>
-        <div class="nav-item seller">
-            sell
-        </div>
-    </div>
+        <router-link to="/goods">goods</router-link>
+        <router-link to="/ratings">ratings</router-link>
+        <router-link to="/seller">sellers</router-link>
+    </div> 
 </template>
 
 <script>
