@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <MyHeader />
+    <MyHeader :poiInfo='poiInfo'></MyHeader>
     <MyNav />
     <!-- router exit, router that matched will render here -->
     <router-view></router-view>
